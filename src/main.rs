@@ -56,9 +56,6 @@ fn offset<T>(n: u32) -> *const c_void {
 
 // == // Generate your VAO here
 unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
-    // Implement me!
-
-    // Also, feel free to delete comments :)
 
     // This should:
     // * Generate a VAO and bind it
@@ -70,23 +67,23 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     // * Return the ID of the VAO
     
     // Create a value for passing to GenVertexArray as a reference
-    let mut array: u32 = 1337;
+    let mut array: u32 = 4321;
     let target = gl::ARRAY_BUFFER;
     let usage = gl::STATIC_DRAW;
-    
+
+    // Create and bind VAO    
     gl::GenVertexArrays(1,  &mut array);
     gl::BindVertexArray(array);
 
+    // Create and bind VBO
     let mut buffer = 0;
     gl::GenBuffers(1, &mut buffer);
     gl::BindBuffer(target, buffer);
 
-    // Create a simple set of 3D vertices, in the format [x,y,z,x,y,z...x,y,z]
-    let vertices = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
 
     gl::BufferData(target, byte_size_of_array(&vertices), pointer_to_array(&vertices), usage);
 
-    gl::VertexAttribPointer(1, 3, gl::FLOAT, gl::FALSE,0,ptr::null());
+    gl::VertexAttribPointer(1, 3, gl::FLOAT, gl::FALSE,0, ptr::null());
 
     gl::EnableVertexAttribArray(1);
 
@@ -94,7 +91,7 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     let index_target = gl::ELEMENT_ARRAY_BUFFER;
     gl::GenBuffers(2, &mut index_buffer);
     gl::BindBuffer(index_target,index_buffer);
-    let indices = [0, 1, 2];
+   
     gl::BufferData(index_target,byte_size_of_array(&indices), pointer_to_array(&indices), usage);
 
     array
@@ -162,7 +159,13 @@ fn main() {
 
         // == // Set up your VAO around here
 
-        let my_vao = unsafe { 1337 };
+        // Create a simple set of 3D vertices, in the format [x,y,z,x,y,z...x,y,z]
+        let vertices: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+        
+        // Indices and vertices should be inputs to VAO
+        let indices: Vec<u32> = vec![1, 2, 3];
+
+        let my_vao = unsafe { create_vao(&vertices, &indices) };
 
 
         // == // Set up your shaders here

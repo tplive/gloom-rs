@@ -71,7 +71,7 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     // * Return the ID of the VAO
 
     // Create a value for passing to GenVertexArray as a reference
-    let mut array: u32 = 4321;
+    let mut array: u32 = 0;
     let target = gl::ARRAY_BUFFER;
     let usage = gl::STATIC_DRAW;
 
@@ -181,9 +181,8 @@ fn main() {
         // == // Set up your VAO around here
 
         // Create a simple set of 3D vertices, in the format [x,y,z,x,y,z...x,y,z]
-        let vertices: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
-
         // Indices and vertices should be inputs to VAO
+        let vertices: Vec<f32> = vec![-0.6, -0.6, 0.0, 0.6, -0.6, 0.0, 0.0, 0.6, 0.0];
         let indices: Vec<u32> = vec![1, 2, 3];
 
         let my_vao = unsafe { create_vao(&vertices, &indices) };
@@ -215,7 +214,7 @@ fn main() {
                 .link()
                 .activate()
         };
-
+        
         
         // Used to demonstrate keyboard handling for exercise 2.
         let mut _arbitrary_number = 0.0; // feel free to remove

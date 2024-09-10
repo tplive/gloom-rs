@@ -15,6 +15,7 @@ use std::sync::{Mutex, Arc, RwLock};
 mod shader;
 mod util;
 
+use gl::{GenBuffers, VertexAttribPointer, STATIC_DRAW};
 use glutin::event::{Event, WindowEvent, DeviceEvent, KeyboardInput, ElementState::{Pressed, Released}, VirtualKeyCode::{self, *}};
 use glutin::event_loop::ControlFlow;
 
@@ -52,6 +53,7 @@ fn offset<T>(n: u32) -> *const c_void {
 // ptr::null()
 
 
+
 // == // Generate your VAO here
 unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     // Implement me!
@@ -66,8 +68,36 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     // * Generate a IBO and bind it
     // * Fill it with data
     // * Return the ID of the VAO
+    
+    // Create a value for passing to GenVertexArray as a reference
+    let mut array: u32 = 1337;
+    let target = gl::ARRAY_BUFFER;
+    let usage = gl::STATIC_DRAW;
+    
+    gl::GenVertexArrays(1,  &mut array);
+    gl::BindVertexArray(array);
 
-    0
+    let mut buffer = 0;
+    gl::GenBuffers(1, &mut buffer);
+    gl::BindBuffer(target, buffer);
+
+    // Create a simple set of 3D vertices, in the format [x,y,z,x,y,z...x,y,z]
+    let vertices = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+
+    gl::BufferData(target, byte_size_of_array(&vertices), pointer_to_array(&vertices), usage);
+
+    gl::VertexAttribPointer(1, 3, gl::FLOAT, gl::FALSE,0,ptr::null());
+
+    gl::EnableVertexAttribArray(1);
+
+    let mut index_buffer = 0;
+    let index_target = gl::ELEMENT_ARRAY_BUFFER;
+    gl::GenBuffers(2, &mut index_buffer);
+    gl::BindBuffer(index_target,index_buffer);
+    let indices = [0, 1, 2];
+    gl::BufferData(index_target,byte_size_of_array(&indices), pointer_to_array(&indices), usage);
+
+    array
 }
 
 

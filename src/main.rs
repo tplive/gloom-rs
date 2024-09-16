@@ -61,15 +61,6 @@ fn offset<T>(n: u32) -> *const c_void {
 
 // == // Generate your VAO here
 unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
-    // This should:
-    // * Generate a VAO and bind it
-    // * Generate a VBO and bind it
-    // * Fill it with data
-    // * Configure a VAP for the data and enable it
-    // * Generate a IBO and bind it
-    // * Fill it with data
-    // * Return the ID of the VAO
-
     // Create a value for passing to GenVertexArray as a reference
     let mut array: u32 = 0;
     let target = gl::ARRAY_BUFFER;
@@ -84,19 +75,24 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     gl::GenBuffers(1, &mut buffer);
     gl::BindBuffer(target, buffer);
 
+    // Feed buffer with data from input argument 'vertices'
     gl::BufferData(
         target,
-        byte_size_of_array(&vertices),
-        pointer_to_array(&vertices),
+        byte_size_of_array(&vertices), // Use helper function to get the size
+        pointer_to_array(&vertices),   // Use helper function to get pointer
         usage,
     );
 
+    // We need a VAP to configure the data buffer
     gl::VertexAttribPointer(1, 3, gl::FLOAT, gl::FALSE, 0, ptr::null());
 
     gl::EnableVertexAttribArray(1);
 
     let mut index_buffer = 0;
     let index_target = gl::ELEMENT_ARRAY_BUFFER;
+
+    // We perform the same steps as for VAO to create a data buffer with indeces
+    // connecting the vertices into shapes
     gl::GenBuffers(2, &mut index_buffer);
     gl::BindBuffer(index_target, index_buffer);
 
@@ -107,6 +103,7 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
         usage,
     );
 
+    // Return the VAO ID
     array
 }
 
@@ -183,13 +180,13 @@ fn main() {
         // Create a simple set of 3D vertices, in the format [x,y,z,x,y,z...x,y,z]
         // Indices and vertices should be inputs to VAO
         let vertices: Vec<f32> = vec![-0.6, -0.6, 0.0, 0.6, -0.6, 0.0, 0.0, 0.6, 0.0];
-        let indices: Vec<u32> = vec![1, 2, 3];
+        let indices: Vec<u32> = vec![0, 1, 2];
 
         let my_vao = unsafe { create_vao(&vertices, &indices) };
 
         unsafe {
             gl::BindVertexArray(my_vao);
-            gl::DrawElements(gl::TRIANGLES, 3, gl::UNSIGNED_INT, ptr::null());
+            gl::DrawElements(gl::TRIANGLES, 9, gl::UNSIGNED_INT, ptr::null());
         }
 
         // == // Set up your shaders here
@@ -214,8 +211,9 @@ fn main() {
                 .link()
                 .activate()
         };
-        
-        
+
+        println!("VAO ID\t: {}", &my_vao);
+
         // Used to demonstrate keyboard handling for exercise 2.
         let mut _arbitrary_number = 0.0; // feel free to remove
 

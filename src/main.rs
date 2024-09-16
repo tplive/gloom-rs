@@ -60,8 +60,11 @@ fn offset<T>(n: u32) -> *const c_void {
 
 // == // Generate your VAO here
 unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
+    
     // Create a value for passing to GenVertexArray as a reference
     let mut array: u32 = 0;
+    
+    // Set values for buffer type and usage
     let target = gl::ARRAY_BUFFER;
     let usage = gl::STATIC_DRAW;
 
@@ -84,13 +87,17 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
 
     // We need a VAP to configure the data buffer
     gl::VertexAttribPointer(1, 3, gl::FLOAT, gl::FALSE, 0, ptr::null());
-
+    
+    // Enabling the VAP
     gl::EnableVertexAttribArray(1);
 
+    // Create index buffer value
     let mut index_buffer = 0;
+    
+    // Set buffer type
     let index_target = gl::ELEMENT_ARRAY_BUFFER;
 
-    // We perform the same steps as for VAO to create a data buffer with indeces
+    // We perform the same steps as for VAO to create a data buffer with indices
     // connecting the vertices into shapes
     gl::GenBuffers(2, &mut index_buffer);
     gl::BindBuffer(index_target, index_buffer);

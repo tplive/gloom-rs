@@ -15,7 +15,7 @@ use std::{mem, os::raw::c_void, ptr};
 mod shader;
 mod util;
 
-use gl::{GenBuffers, VertexAttribPointer, STATIC_DRAW};
+
 use glutin::event::{
     DeviceEvent,
     ElementState::{Pressed, Released},
@@ -24,7 +24,6 @@ use glutin::event::{
     WindowEvent,
 };
 use glutin::event_loop::ControlFlow;
-use shader::Shader;
 
 // initial window size
 const INITIAL_SCREEN_W: u32 = 800;

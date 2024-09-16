@@ -188,13 +188,6 @@ fn main() {
         let vertices: Vec<f32> = vec![-0.6, -0.6, 0.0, 0.6, -0.6, 0.0, 0.0, 0.6, 0.0];
         let indices: Vec<u32> = vec![0, 1, 2];
 
-        let my_vao = unsafe { create_vao(&vertices, &indices) };
-
-        unsafe {
-            gl::BindVertexArray(my_vao);
-            gl::DrawElements(gl::TRIANGLES, 9, gl::UNSIGNED_INT, ptr::null());
-        }
-
         // == // Set up your shaders here
 
         // Basic usage of shader helper:
@@ -204,21 +197,23 @@ fn main() {
         // This snippet is not enough to do the exercise, and will need to be modified (outside
         // of just using the correct path), but it only needs to be called once
 
-        let vertex_shader = unsafe {
+        let simple_shader = unsafe {
             shader::ShaderBuilder::new()
                 .attach_file("./shaders/simple.vert")
-                .link()
-                .activate()
-        };
-
-        let fragment_shader = unsafe {
-            shader::ShaderBuilder::new()
                 .attach_file("./shaders/simple.frag")
                 .link()
                 .activate()
         };
 
+        // Initialize VAO
+        let my_vao = unsafe { create_vao(&vertices, &indices) };
         println!("VAO ID\t: {}", &my_vao);
+
+        // Bind VAO and call to draw elements
+        unsafe {
+            gl::BindVertexArray(my_vao);
+            gl::DrawElements(gl::TRIANGLES, 9, gl::UNSIGNED_INT, ptr::null());
+        }
 
         // Used to demonstrate keyboard handling for exercise 2.
         let mut _arbitrary_number = 0.0; // feel free to remove

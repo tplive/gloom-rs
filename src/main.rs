@@ -187,18 +187,21 @@ fn main() {
 
         // Create a simple set of 3D vertices, in the format [x,y,z,x,y,z...x,y,z]
         // Indices and vertices should be inputs to VAO
-        let vertices: Vec<f32> = vec![-0.6, -0.6, 0.0, 0.6, -0.6, 0.0, 0.0, 0.6, 0.0];
-        let indices: Vec<u32> = vec![0, 1, 2];
 
-        // == // Set up your shaders here
+        let vertices: Vec<f32> = vec![-0.2, 0.4, 0.0,
+                                    0.2, 0.4, 0.0,
+                                   -0.4, 0.0, 0.0,
+                                    0.0, 0.0, 0.0,
+                                    0.4, 0.0, 0.0,
+                                   -0.2, -0.4, 0.0,
+                                    0.2, -0.4, 0.0,
+                                ];
 
-        // Basic usage of shader helper:
-        // The example code below creates a 'shader' object.
-        // It which contains the field `.program_id` and the method `.activate()`.
-        // The `.` in the path is relative to `Cargo.toml`.
-        // This snippet is not enough to do the exercise, and will need to be modified (outside
-        // of just using the correct path), but it only needs to be called once
-
+        
+        let indices: Vec<u32> = vec![6, 0, 1, 5, 2, 4, 6, 5, 2, 0, 1, 4, 6];
+        
+        let vao = unsafe { create_vao(&vertices, &indices) };
+        
         unsafe {
             let shader = shader::ShaderBuilder::new()
                 .attach_file("./shaders/simple.vert")
@@ -212,8 +215,6 @@ fn main() {
             shader.activate();
             shader
         };
-
-        let my_vao = unsafe { create_vao(&vertices, &indices) };
 
         // Used to demonstrate keyboard handling for exercise 2.
         let mut _arbitrary_number = 0.0; // feel free to remove
@@ -271,12 +272,14 @@ fn main() {
 
             unsafe {
                 // Clear the color and depth buffers
-                gl::ClearColor(0.735, 0.046, 0.078, 1.0); // night sky
+                gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
-                gl::BindVertexArray(my_vao);
+                gl::BindVertexArray(vao);
+                //gl::BindVertexArray(vao2);
+
                 gl::DrawElements(
-                    gl::TRIANGLES,
+                    gl::LINE_STRIP,
                     indices.len() as i32,
                     gl::UNSIGNED_INT,
                     ptr::null(),

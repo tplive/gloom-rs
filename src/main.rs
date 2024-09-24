@@ -205,15 +205,10 @@ fn main() {
                 .activate()
         };
 
+        
         // Initialize VAO
         let my_vao = unsafe { create_vao(&vertices, &indices) };
         println!("VAO ID\t: {}", &my_vao);
-
-        // Bind VAO and call to draw elements
-        unsafe {
-            gl::BindVertexArray(my_vao);
-            gl::DrawElements(gl::TRIANGLES, 9, gl::UNSIGNED_INT, ptr::null());
-        }
 
         // Used to demonstrate keyboard handling for exercise 2.
         let mut _arbitrary_number = 0.0; // feel free to remove
@@ -268,13 +263,15 @@ fn main() {
             }
 
             // == // Please compute camera transforms here (exercise 2 & 3)
-
+            
             unsafe {
                 // Clear the color and depth buffers
-                gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky
+                gl::ClearColor(0.735, 0.046, 0.078, 1.0); // night sky
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
-                // == // Issue the necessary gl:: commands to draw your scene here
+                // Bind VAO and draw
+                gl::BindVertexArray(my_vao);
+                gl::DrawElements(gl::TRIANGLES, 9, gl::UNSIGNED_INT, ptr::null());
             }
 
             // Display the new color buffer on the display

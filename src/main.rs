@@ -15,7 +15,6 @@ use std::{mem, os::raw::c_void, ptr};
 mod shader;
 mod util;
 
-
 use glutin::event::{
     DeviceEvent,
     ElementState::{Pressed, Released},
@@ -60,16 +59,15 @@ fn offset<T>(n: u32) -> *const c_void {
 
 // == // Generate your VAO here
 unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
-    
     // Create a value for passing to GenVertexArray as a reference
     let mut array: u32 = 0;
-    
+
     // Set values for buffer type and usage
     let target = gl::ARRAY_BUFFER;
     let usage = gl::STATIC_DRAW;
 
     // Create and bind VAO
-    gl::GenVertexArrays(1, &mut array);
+    gl::GenVertexArrays(0, &mut array);
     gl::BindVertexArray(array);
 
     // Create and bind VBO
@@ -86,20 +84,24 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     );
 
     // We need a VAP to configure the data buffer
-    gl::VertexAttribPointer(1, 3, gl::FLOAT, gl::FALSE, 0, ptr::null());
-    
+    gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, 0, ptr::null());
+
     // Enabling the VAP
-    gl::EnableVertexAttribArray(1);
+    gl::EnableVertexAttribArray(0);
+    let error = gl::GetError();
+    if error != gl::NO_ERROR {
+        println!("Error: {}", error);
+    }
 
     // Create index buffer value
     let mut index_buffer = 0;
-    
+
     // Set buffer type
     let index_target = gl::ELEMENT_ARRAY_BUFFER;
 
     // We perform the same steps as for VAO to create a data buffer with indices
     // connecting the vertices into shapes
-    gl::GenBuffers(2, &mut index_buffer);
+    gl::GenBuffers(1, &mut index_buffer);
     gl::BindBuffer(index_target, index_buffer);
 
     gl::BufferData(
@@ -197,18 +199,21 @@ fn main() {
         // This snippet is not enough to do the exercise, and will need to be modified (outside
         // of just using the correct path), but it only needs to be called once
 
-        let simple_shader = unsafe {
-            shader::ShaderBuilder::new()
+        unsafe {
+            let shader = shader::ShaderBuilder::new()
                 .attach_file("./shaders/simple.vert")
                 .attach_file("./shaders/simple.frag")
-                .link()
-                .activate()
+                .link();
+
+            if shader.program_id == 0 {
+                panic!("Failed to link shader program");
+            }
+
+            shader.activate();
+            shader
         };
 
-        
-        // Initialize VAO
         let my_vao = unsafe { create_vao(&vertices, &indices) };
-        println!("VAO ID\t: {}", &my_vao);
 
         // Used to demonstrate keyboard handling for exercise 2.
         let mut _arbitrary_number = 0.0; // feel free to remove
@@ -263,15 +268,19 @@ fn main() {
             }
 
             // == // Please compute camera transforms here (exercise 2 & 3)
-            
+
             unsafe {
                 // Clear the color and depth buffers
                 gl::ClearColor(0.735, 0.046, 0.078, 1.0); // night sky
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
-                // Bind VAO and draw
                 gl::BindVertexArray(my_vao);
-                gl::DrawElements(gl::TRIANGLES, 9, gl::UNSIGNED_INT, ptr::null());
+                gl::DrawElements(
+                    gl::TRIANGLES,
+                    indices.len() as i32,
+                    gl::UNSIGNED_INT,
+                    ptr::null(),
+                );
             }
 
             // Display the new color buffer on the display

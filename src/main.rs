@@ -188,6 +188,7 @@ fn main() {
         // Create a simple set of 3D vertices, in the format [x,y,z,x,y,z...x,y,z]
         // Indices and vertices should be inputs to VAO
 
+        /*
         let vertices: Vec<f32> = vec![-0.2, 0.4, 0.0,
                                     0.2, 0.4, 0.0,
                                    -0.4, 0.0, 0.0,
@@ -199,6 +200,15 @@ fn main() {
 
         
         let indices: Vec<u32> = vec![6, 0, 1, 5, 2, 4, 6, 5, 2, 0, 1, 4, 6];
+        */
+        
+        let vertices: Vec<f32> = vec![0.6, -0.8, -1.2,
+                                      0.0, 0.4, 0.0, 
+                                     -0.8, -0.2, 1.2
+                                ];
+
+        
+        let indices: Vec<u32> = vec![0, 1, 2];
         
         let vao = unsafe { create_vao(&vertices, &indices) };
         
@@ -279,7 +289,7 @@ fn main() {
                 //gl::BindVertexArray(vao2);
 
                 gl::DrawElements(
-                    gl::LINE_STRIP,
+                    gl::TRIANGLES,
                     indices.len() as i32,
                     gl::UNSIGNED_INT,
                     ptr::null(),

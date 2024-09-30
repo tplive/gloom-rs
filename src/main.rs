@@ -58,7 +58,7 @@ fn offset<T>(n: u32) -> *const c_void {
 // ptr::null()
 
 // == // Generate your VAO here
-unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
+unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>, colors: &Vec<f32>) -> u32 {
     // Create a value for passing to GenVertexArray as a reference
     let mut array: u32 = 0;
 
@@ -198,20 +198,21 @@ fn main() {
                                     0.2, -0.4, 0.0,
                                 ];
 
-        
+
         let indices: Vec<u32> = vec![6, 0, 1, 5, 2, 4, 6, 5, 2, 0, 1, 4, 6];
         */
-        
+
         let vertices: Vec<f32> = vec![0.6, -0.8, -1.0,
                                       0.0, 0.4, 0.0, 
                                      -0.8, -0.2, 1.0
                                 ];
 
-        
+        let colors: Vec<f32> = vec![1.0, 0.2, 0.6, 1.0];
+
         let indices: Vec<u32> = vec![0, 1, 2];
-        
-        let vao = unsafe { create_vao(&vertices, &indices) };
-        
+
+        let vao = unsafe { create_vao(&vertices, &indices, &colors) };
+
         unsafe {
             let shader = shader::ShaderBuilder::new()
                 .attach_file("./shaders/simple.vert")

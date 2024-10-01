@@ -93,6 +93,16 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>, colors: &Vec<f32>)
         println!("Error: {}", error);
     }
 
+    // Set up color buffer
+    let mut col_buffer: u32 = 0;
+    let color_target = gl::ELEMENT_ARRAY_BUFFER;
+    gl::GenBuffers(1, &mut col_buffer);
+    gl::BindBuffer(color_target, col_buffer);
+
+    gl::BufferData(color_target, byte_size_of_array(&colors), pointer_to_array(&colors), usage);
+
+    gl::VertexAttribPointer(1, 4, gl::FLOAT, gl::FALSE, 0, ptr::null());
+
     // Create index buffer value
     let mut index_buffer = 0;
 

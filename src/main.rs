@@ -69,11 +69,13 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>, colors: &Vec<f32>)
     // Create and bind VAO
     gl::GenVertexArrays(0, &mut array);
     gl::BindVertexArray(array);
+    println!("VAO ID\t: {}", &array);
 
     // Create and bind VBO
     let mut buffer = 0;
     gl::GenBuffers(1, &mut buffer);
     gl::BindBuffer(target, buffer);
+    println!("VBO ID\t: {}", &buffer);
 
     // Feed buffer with data from input argument 'vertices'
     gl::BufferData(
@@ -95,13 +97,24 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>, colors: &Vec<f32>)
 
     // Set up color buffer
     let mut col_buffer: u32 = 0;
-    let color_target = gl::ELEMENT_ARRAY_BUFFER;
+    let color_target = gl::ARRAY_BUFFER;
     gl::GenBuffers(1, &mut col_buffer);
     gl::BindBuffer(color_target, col_buffer);
+    println!("Col ID\t: {}", &col_buffer);
 
-    gl::BufferData(color_target, byte_size_of_array(&colors), pointer_to_array(&colors), usage);
+    gl::BufferData(
+        color_target,
+        byte_size_of_array(&colors),
+        pointer_to_array(&colors),
+        usage,
+    );
 
     gl::VertexAttribPointer(1, 4, gl::FLOAT, gl::FALSE, 0, ptr::null());
+    gl::EnableVertexAttribArray(1);
+    let error = gl::GetError();
+    if error != gl::NO_ERROR {
+        println!("Error: {}", error);
+    }
 
     // Create index buffer value
     let mut index_buffer = 0;
@@ -113,6 +126,7 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>, colors: &Vec<f32>)
     // connecting the vertices into shapes
     gl::GenBuffers(1, &mut index_buffer);
     gl::BindBuffer(index_target, index_buffer);
+    println!("Ind ID\t: {}", &index_buffer);
 
     gl::BufferData(
         index_target,
@@ -215,9 +229,12 @@ fn main() {
         let vertices: Vec<f32> = vec![0.6, -0.8, -1.0,
                                       0.0, 0.4, 0.0, 
                                      -0.8, -0.2, 1.0
-                                ];
+                                    ];
 
-        let colors: Vec<f32> = vec![1.0, 0.2, 0.6, 1.0];
+        let colors: Vec<f32> = vec![1.0, 0.2, 0.6, 1.0, 
+                                    0.6, 1.0, 0.2, 1.0, 
+                                    0.2, 0.6, 1.0, 1.0
+                                ];
 
         let indices: Vec<u32> = vec![0, 1, 2];
 
@@ -294,10 +311,10 @@ fn main() {
             unsafe {
                 // Clear the color and depth buffers
                 gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky
+                
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
                 gl::BindVertexArray(vao);
-                //gl::BindVertexArray(vao2);
 
                 gl::DrawElements(
                     gl::TRIANGLES,

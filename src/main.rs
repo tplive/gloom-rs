@@ -62,30 +62,25 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>, colors: &Vec<f32>)
     // Create a value for passing to GenVertexArray as a reference
     let mut array: u32 = 0;
 
-    // Set values for buffer type and usage
-    let target = gl::ARRAY_BUFFER;
-    let usage = gl::STATIC_DRAW;
-
-    // Create and bind VAO
-    gl::GenVertexArrays(0, &mut array);
+    // Create and bind Vertex Array Object
+    gl::GenVertexArrays(1, &mut array);
     gl::BindVertexArray(array);
-    println!("VAO ID\t: {}", &array);
 
-    // Create and bind VBO
+    // Create and bind Vertex Buffer Object
     let mut buffer = 0;
     gl::GenBuffers(1, &mut buffer);
-    gl::BindBuffer(target, buffer);
-    println!("VBO ID\t: {}", &buffer);
+    gl::BindBuffer(gl::ARRAY_BUFFER, buffer);
 
     // Feed buffer with data from input argument 'vertices'
     gl::BufferData(
-        target,
+        gl::ARRAY_BUFFER,
         byte_size_of_array(&vertices), // Use helper function to get the size
         pointer_to_array(&vertices),   // Use helper function to get pointer
-        usage,
+        gl::STATIC_DRAW,
     );
 
-    // We need a VAP to configure the data buffer
+    // We need a Vertex Attribute Pointer (VAP) to configure the data buffer
+    // This is the first VAP, so index 0. Will use this index in the shader code
     gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, 0, ptr::null());
 
     // Enabling the VAP
@@ -95,20 +90,20 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>, colors: &Vec<f32>)
         println!("Error: {}", error);
     }
 
+    // We want a separate buffer for the colors
     // Set up color buffer
     let mut col_buffer: u32 = 0;
-    let color_target = gl::ARRAY_BUFFER;
     gl::GenBuffers(1, &mut col_buffer);
-    gl::BindBuffer(color_target, col_buffer);
-    println!("Col ID\t: {}", &col_buffer);
+    gl::BindBuffer(gl::ARRAY_BUFFER, col_buffer);
 
     gl::BufferData(
-        color_target,
+        gl::ARRAY_BUFFER,
         byte_size_of_array(&colors),
         pointer_to_array(&colors),
-        usage,
+        gl::STATIC_DRAW,
     );
 
+    // This buffer gets a separate VAP, indexed 1.
     gl::VertexAttribPointer(1, 4, gl::FLOAT, gl::FALSE, 0, ptr::null());
     gl::EnableVertexAttribArray(1);
     let error = gl::GetError();
@@ -119,20 +114,16 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>, colors: &Vec<f32>)
     // Create index buffer value
     let mut index_buffer = 0;
 
-    // Set buffer type
-    let index_target = gl::ELEMENT_ARRAY_BUFFER;
-
     // We perform the same steps as for VAO to create a data buffer with indices
     // connecting the vertices into shapes
     gl::GenBuffers(1, &mut index_buffer);
-    gl::BindBuffer(index_target, index_buffer);
-    println!("Ind ID\t: {}", &index_buffer);
+    gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, index_buffer);
 
     gl::BufferData(
-        index_target,
+        gl::ELEMENT_ARRAY_BUFFER,
         byte_size_of_array(&indices),
         pointer_to_array(&indices),
-        usage,
+        gl::STATIC_DRAW,
     );
 
     // Return the VAO ID
@@ -226,17 +217,29 @@ fn main() {
         let indices: Vec<u32> = vec![6, 0, 1, 5, 2, 4, 6, 5, 2, 0, 1, 4, 6];
         */
 
-        let vertices: Vec<f32> = vec![0.6, -0.8, -1.0,
-                                      0.0, 0.4, 0.0, 
-                                     -0.8, -0.2, 1.0
-                                    ];
+        let vertices: Vec<f32> = vec![
+            // Upper left (+x, +y)
+            0.6, 0.2, 0.0,
+            0.2, 0.6, 0.0, 
+            0.2, 0.2, 0.0,
+            // Lower left (+x, -y)
+            0.4, -0.4, 0.0,
+            0.2, -0.2, 0.0,
+            0.6, -0.3, 0.0,
+        ];
 
-        let colors: Vec<f32> = vec![1.0, 0.2, 0.6, 1.0, 
-                                    0.6, 1.0, 0.2, 1.0, 
-                                    0.2, 0.6, 1.0, 1.0
-                                ];
+        let colors: Vec<f32> = vec![
+            // Six vertices, six colors
+            1.0, 0.2, 0.6, 1.0,
+            0.6, 1.0, 0.2, 1.0,
+            0.2, 0.6, 1.0, 1.0,
+            0.8, 0.4, 0.2, 1.0,
+            0.2, 0.8, 0.4, 1.0,
+            0.4, 0.2, 0.8, 1.0,
+        ];
 
-        let indices: Vec<u32> = vec![0, 1, 2];
+        // Draw elements. Six vertices, three triangles.
+        let indices: Vec<u32> = vec![0, 1, 2, 3, 4, 5];
 
         let vao = unsafe { create_vao(&vertices, &indices, &colors) };
 
@@ -310,17 +313,18 @@ fn main() {
 
             unsafe {
                 // Clear the color and depth buffers
-                gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky
+                //gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky
+                gl::ClearColor(1.0, 0.0, 0.0, 1.0); // bright red
                 
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
-
+                
                 gl::BindVertexArray(vao);
 
                 gl::DrawElements(
                     gl::TRIANGLES,
                     indices.len() as i32,
                     gl::UNSIGNED_INT,
-                    ptr::null(),
+                    ptr::null()
                 );
             }
 

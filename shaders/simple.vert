@@ -7,6 +7,8 @@ out layout(location=1) vec4 my_color;
 
 void main()
 {
-    gl_Position = vec4(position, 1.0f);
+    mat4x4 id_matrix = mat4(1);
+
+    gl_Position = id_matrix * vec4(position, 1.0f);
     my_color = color;
 }

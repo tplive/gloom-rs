@@ -1,9 +1,8 @@
-#version 450 core
+#version 430 core
 
-in vec4 vertColor;
 out vec4 color;
 
 void main()
 {
-    color = vertColor;
+    color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }

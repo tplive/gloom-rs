@@ -24,6 +24,7 @@ use glutin::event::{
     WindowEvent,
 };
 use glutin::event_loop::ControlFlow;
+use rand::Rng;
 
 // initial window size
 const INITIAL_SCREEN_W: u32 = 800;
@@ -59,7 +60,7 @@ fn offset<T>(n: u32) -> *const c_void {
 // ptr::null()
 
 // == // Generate your VAO here
-unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
+unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>, colors: &Vec<f32>) -> u32 {
     let mut vao: u32 = 0; // Vertex Array Object
     let mut vbo: u32 = 0; // Vertex Buffer Object, for coordinates
     let mut ebo: u32 = 0; // Vertex Buffer Object, for element indices
@@ -105,7 +106,6 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     gl::EnableVertexAttribArray(0);
     check_gl_error("Vertex Attribute Pointer for vertex buffer");
 
-/*
     // Color buffer
     gl::BindBuffer(gl::ARRAY_BUFFER, cbo);
     gl::BufferData(
@@ -126,7 +126,7 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     );
 
     gl::EnableVertexAttribArray(1);
-*/
+
     return vao;
 }
 
@@ -137,6 +137,12 @@ fn check_gl_error(message: &str) {
     if error != gl::NO_ERROR {
         println!("OpenGL Error ({}): {}", message, error);
     }
+}
+
+fn random_color() -> Vec<f32> {
+    let mut rng = rand::thread_rng();
+    
+    return vec![rng.gen(), rng.gen(), rng.gen(), rng.gen()];
 }
 fn main() {
     // Set up the necessary objects to deal with windows and event handling
@@ -237,7 +243,12 @@ fn main() {
 
         let indices: Vec<u32> = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
-        let my_vao = unsafe { create_vao(&vertices, &indices) };
+        let mut colors = vec![];
+        for _i in &indices {
+            colors.append(&mut random_color());
+        }
+
+        let my_vao = unsafe { create_vao(&vertices, &indices, &colors) };
 
         let my_shader = unsafe {
             shader::ShaderBuilder::new()

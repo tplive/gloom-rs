@@ -24,7 +24,8 @@ use glutin::event::{
     WindowEvent,
 };
 use glutin::event_loop::ControlFlow;
-use rand::Rng;
+use rand::seq::SliceRandom;
+use rand::{thread_rng, Rng};
 
 // initial window size
 const INITIAL_SCREEN_W: u32 = 800;
@@ -241,7 +242,10 @@ fn main() {
         vertices.append(&mut triangle3);
         vertices.append(&mut triangle4);
 
-        let indices: Vec<u32> = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+        let mut indices: Vec<u32> = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
+        let mut rng = thread_rng();
+        indices.shuffle(&mut rng);
 
         let mut colors = vec![];
         for _i in &indices {

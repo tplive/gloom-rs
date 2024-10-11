@@ -206,13 +206,36 @@ fn main() {
             );
         }
 
-        let vertices: Vec<f32> = vec![
-            0.8, 0.8,  0.0,
+        
+        let mut vertices: Vec<f32> = vec![
+            0.8, 0.8, 0.0,
+            0.4, 0.8, 0.0,
+            0.6, 0.2, 0.0,
+        ];
+            
+        let mut triangle2: Vec<f32> = vec![
+            -0.4, 0.8, 0.0,
             -0.8, 0.8, 0.0,
-            0.0, -0.8, 0.0,
+            -0.6, 0.2, 0.0,
         ];
 
-        let indices: Vec<u32> = vec![0, 1, 2];
+        let mut triangle3: Vec<f32> = vec![
+            -0.8, -0.8, 0.0,
+            -0.4, -0.8, 0.0,
+            -0.6, -0.2, 0.0,
+        ];
+        
+        let mut triangle4: Vec<f32> = vec![
+            0.4, -0.8, 0.0,
+            0.8, -0.8, 0.0,
+            0.6, -0.2, 0.0,
+        ];
+
+        vertices.append(&mut triangle2);
+        vertices.append(&mut triangle3);
+        vertices.append(&mut triangle4);
+
+        let indices: Vec<u32> = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
         let my_vao = unsafe { create_vao(&vertices, &indices) };
 

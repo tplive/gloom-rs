@@ -143,7 +143,7 @@ fn check_gl_error(message: &str) {
 fn random_color() -> Vec<f32> {
     let mut rng = rand::thread_rng();
     
-    return vec![rng.gen(), rng.gen(), rng.gen(), rng.gen()];
+    return vec![rng.gen(), rng.gen(), rng.gen(), 0.5];
 }
 fn main() {
     // Set up the necessary objects to deal with windows and event handling
@@ -213,48 +213,69 @@ fn main() {
             );
         }
 
-        
         let mut vertices: Vec<f32> = vec![
-            0.8, 0.8, 0.0,
-            0.4, 0.8, 0.0,
-            0.6, 0.2, 0.0,
+            0.6, 0.7, -0.4,
+            -0.4, 0.5, -0.4,
+            0.2, -0.9, -0.4,
         ];
             
         let mut triangle2: Vec<f32> = vec![
-            -0.4, 0.8, 0.0,
-            -0.8, 0.8, 0.0,
-            -0.6, 0.2, 0.0,
+            0.5, 0.2, -0.2,
+            -0.4, 0.8, -0.2,
+            -0.6, -0.3, -0.2,
         ];
 
         let mut triangle3: Vec<f32> = vec![
             -0.8, -0.8, 0.0,
-            -0.4, -0.8, 0.0,
-            -0.6, -0.2, 0.0,
+            0.4, 0.3, 0.0,
+            0.3, 0.7, 0.0,
         ];
         
         let mut triangle4: Vec<f32> = vec![
-            0.4, -0.8, 0.0,
-            0.8, -0.8, 0.0,
-            0.6, -0.2, 0.0,
+            -0.5, 0.7, 0.2,
+            0.4, -0.8, 0.2,
+            0.6, 0.0, 0.2,
         ];
 
         vertices.append(&mut triangle2);
         vertices.append(&mut triangle3);
         vertices.append(&mut triangle4);
 
-        let mut indices: Vec<u32> = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+        //let mut indices: Vec<u32> = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11];
+        let mut indices: Vec<u32> = vec![9, 10, 11, 6, 7, 8, 3, 4, 5, 0, 1, 2];
+        //let mut indices: Vec<u32> = vec![11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0];
 
-        let mut rng = thread_rng();
-        indices.shuffle(&mut rng);
+        //let mut rng = thread_rng();
+        //indices.shuffle(&mut rng);
 
+        /*
         let mut colors = vec![];
         for _i in &indices {
             colors.append(&mut random_color());
         }
+        */
+        let colors = vec![
+            0.8, 0.2, 0.8, 0.5,
+            0.8, 0.2, 0.8, 0.5,
+            0.8, 0.2, 0.8, 0.5,
+            
+            0.8, 0.2, 0.2, 0.5,
+            0.8, 0.2, 0.2, 0.5,
+            0.8, 0.2, 0.2, 0.5,
+            
+            0.2, 0.2, 0.8, 0.5,
+            0.2, 0.2, 0.8, 0.5,
+            0.2, 0.2, 0.8, 0.5,
+            
+            0.2, 0.8, 0.2, 0.5,
+            0.2, 0.8, 0.2, 0.5,
+            0.2, 0.8, 0.2, 0.5,
+            
+        ];
 
-        let my_vao = unsafe { create_vao(&vertices, &indices, &colors) };
+        unsafe { create_vao(&vertices, &indices, &colors) };
 
-        let my_shader = unsafe {
+        unsafe {
             shader::ShaderBuilder::new()
                 .attach_file("./shaders/simple.vert")
                 .attach_file("./shaders/simple.frag")

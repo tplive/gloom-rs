@@ -214,15 +214,15 @@ fn main() {
         }
 
         let mut vertices: Vec<f32> = vec![
-            0.6, 0.7, -0.4,
-            -0.4, 0.5, -0.4,
-            0.2, -0.9, -0.4,
+            0.6, 0.7, 0.4,
+            -0.4, 0.5, 0.4,
+            0.2, -0.9, 0.4,
         ];
             
         let mut triangle2: Vec<f32> = vec![
-            0.5, 0.2, -0.2,
-            -0.4, 0.8, -0.2,
-            -0.6, -0.3, -0.2,
+            0.5, 0.2, 0.2,
+            -0.4, 0.8, 0.2,
+            -0.6, -0.3, 0.2,
         ];
 
         let mut triangle3: Vec<f32> = vec![
@@ -232,17 +232,17 @@ fn main() {
         ];
         
         let mut triangle4: Vec<f32> = vec![
-            -0.5, 0.7, 0.2,
-            0.4, -0.8, 0.2,
-            0.6, 0.0, 0.2,
+            -0.5, 0.7, -0.2,
+            0.4, -0.8, -0.2,
+            0.6, 0.0, -0.2,
         ];
 
         vertices.append(&mut triangle2);
         vertices.append(&mut triangle3);
         vertices.append(&mut triangle4);
 
-        //let mut indices: Vec<u32> = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11];
-        let mut indices: Vec<u32> = vec![9, 10, 11, 6, 7, 8, 3, 4, 5, 0, 1, 2];
+        let mut indices: Vec<u32> = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+        //let mut indices: Vec<u32> = vec![9, 10, 11, 6, 7, 8, 3, 4, 5, 0, 1, 2];
         //let mut indices: Vec<u32> = vec![11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0];
 
         //let mut rng = thread_rng();

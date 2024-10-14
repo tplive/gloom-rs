@@ -1,9 +1,9 @@
-#version 430 core
+#version 450 core
 
 in layout(location=0) vec3 position;
 in layout(location=1) vec4 color;
 
-out layout(location=1) vec4 my_color;
+out vec4 my_color;
 
 void main()
 {

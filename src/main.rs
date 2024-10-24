@@ -275,7 +275,7 @@ fn main() {
 
         unsafe { create_vao(&vertices, &indices, &colors) };
 
-        unsafe {
+       unsafe {
             shader::ShaderBuilder::new()
                 .attach_file("./shaders/simple.vert")
                 .attach_file("./shaders/simple.frag")
@@ -283,9 +283,21 @@ fn main() {
                 .activate();
         };
 
-        check_gl_error("Setting up shaders");
+        let uniform: i32;
         
+        unsafe {
+            let mut curr_program: i32 = 0;
+            gl::GetIntegerv(gl::CURRENT_PROGRAM, &mut curr_program);
 
+            let cname = std::ffi::CString::new("sine_value").expect("CString::new failed");
+            uniform = gl::GetUniformLocation(curr_program as u32, cname.as_ptr());
+        };
+        
+        if uniform == -1 {
+            println!("Warning: Uniform 'sine_value' is not found or used in the shader.")
+        }
+        
+       
         // Used to demonstrate keyboard handling for exercise 2.
         let mut _arbitrary_number = 0.0; // feel free to remove
 
@@ -345,6 +357,14 @@ fn main() {
                 gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
+                let sine_value = elapsed.sin();
+
+                let mut curr_program: i32 = 0;
+                gl::GetIntegerv(gl::CURRENT_PROGRAM, &mut curr_program);
+                
+                gl::UseProgram(curr_program as u32);
+                gl::Uniform1f(uniform, sine_value);
+                
                 // == // Issue the necessary gl:: commands to draw your scene here
                 gl::DrawElements(
                     gl::TRIANGLES,

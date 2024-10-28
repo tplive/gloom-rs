@@ -273,9 +273,18 @@ fn main() {
             
         ];
 
+        // Generate translation matrix 
+        let mut trans: glm::Mat4 = glm::identity();
+
+        trans = glm::scaling(&glm::vec3(1.0, 1.0, 1.0))                                 * trans; // Apply scaling
+        trans = glm::rotation(45.0f32.to_radians(), &glm::vec3(1.0, 1.0, 1.0)) * trans; // Apply rotation
+        trans = glm::translation(&glm::vec3(1.0, 0.0, 0.0))                             * trans; // Apply translation
+
+        
+        // Create VAO
         unsafe { create_vao(&vertices, &indices, &colors) };
 
-       unsafe {
+        unsafe {
             shader::ShaderBuilder::new()
                 .attach_file("./shaders/simple.vert")
                 .attach_file("./shaders/simple.frag")
@@ -364,6 +373,7 @@ fn main() {
                 
                 gl::UseProgram(curr_program as u32);
                 gl::Uniform1f(uniform, sine_value);
+                gl::UniformMatrix4fv(4, 1, gl::FALSE, trans.as_ptr());
                 
                 // == // Issue the necessary gl:: commands to draw your scene here
                 gl::DrawElements(

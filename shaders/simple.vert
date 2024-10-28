@@ -3,17 +3,12 @@
 in layout(location=0) vec3 position;
 in layout(location=1) vec4 color;
 
-uniform float sine_value;
 uniform layout(location=4) mat4x4 trans;
 
 out vec4 my_color;
 
 void main()
 {
-    mat4x4 matrix = mat4(1);
-
-    matrix[0][0] = sine_value;
-
-    gl_Position = matrix * trans * vec4(position, 1.0f);
+    gl_Position = trans * vec4(position, 1.0f);
     my_color = color;
 }

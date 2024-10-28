@@ -248,12 +248,13 @@ fn main() {
         //let mut rng = thread_rng();
         //indices.shuffle(&mut rng);
 
-        /*
+        
         let mut colors = vec![];
         for _i in &indices {
             colors.append(&mut random_color());
         }
-        */
+
+        /*
         let colors = vec![
             0.8, 0.2, 0.8, 0.5,
             0.8, 0.2, 0.8, 0.5,
@@ -272,14 +273,14 @@ fn main() {
             0.2, 0.8, 0.2, 0.5,
             
         ];
+        */
 
-        // Generate translation matrix 
-        let mut trans: glm::Mat4 = glm::identity();
+         // Generate translation matrix 
+         let mut trans: glm::Mat4 = glm::identity();
 
-        trans = glm::scaling(&glm::vec3(1.0, 1.0, 1.0))                                 * trans; // Apply scaling
-        trans = glm::rotation(45.0f32.to_radians(), &glm::vec3(1.0, 1.0, 1.0)) * trans; // Apply rotation
-        trans = glm::translation(&glm::vec3(1.0, 0.0, 0.0))                             * trans; // Apply translation
-
+         trans = glm::scaling(&glm::vec3(1.1, 0.9, 1.0))                                 * trans; // Apply scaling
+         trans = glm::rotation(45.0f32.to_radians(), &glm::vec3(1.0, 1.0, 1.0)) * trans; // Apply rotation
+         trans = glm::translation(&glm::vec3(0.2, -0.2, 0.0))                             * trans; // Apply translation
         
         // Create VAO
         unsafe { create_vao(&vertices, &indices, &colors) };
@@ -291,21 +292,6 @@ fn main() {
                 .link()
                 .activate();
         };
-
-        let uniform: i32;
-        
-        unsafe {
-            let mut curr_program: i32 = 0;
-            gl::GetIntegerv(gl::CURRENT_PROGRAM, &mut curr_program);
-
-            let cname = std::ffi::CString::new("sine_value").expect("CString::new failed");
-            uniform = gl::GetUniformLocation(curr_program as u32, cname.as_ptr());
-        };
-        
-        if uniform == -1 {
-            println!("Warning: Uniform 'sine_value' is not found or used in the shader.")
-        }
-        
        
         // Used to demonstrate keyboard handling for exercise 2.
         let mut _arbitrary_number = 0.0; // feel free to remove
@@ -366,13 +352,17 @@ fn main() {
                 gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
+                // Get the sine value
                 let sine_value = elapsed.sin();
+                                
+                trans[(0, 0)] = sine_value;
+                trans[(0, 1)] = -sine_value;
 
                 let mut curr_program: i32 = 0;
                 gl::GetIntegerv(gl::CURRENT_PROGRAM, &mut curr_program);
                 
                 gl::UseProgram(curr_program as u32);
-                gl::Uniform1f(uniform, sine_value);
+                
                 gl::UniformMatrix4fv(4, 1, gl::FALSE, trans.as_ptr());
                 
                 // == // Issue the necessary gl:: commands to draw your scene here

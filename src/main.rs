@@ -220,21 +220,21 @@ fn main() {
         ];
             
         let mut triangle2: Vec<f32> = vec![
-            0.5, 0.2, 0.2,
-            -0.4, 0.8, 0.2,
-            -0.6, -0.3, 0.2,
+            0.5, 0.2, 0.3,
+            -0.4, 0.8, 0.3,
+            -0.6, -0.3, 0.3,
         ];
 
         let mut triangle3: Vec<f32> = vec![
-            -0.8, -0.8, 0.0,
-            0.4, 0.3, 0.0,
-            0.3, 0.7, 0.0,
+            -0.8, -0.8, 0.2,
+            0.4, 0.3, 0.2,
+            0.3, 0.7, 0.2,
         ];
         
         let mut triangle4: Vec<f32> = vec![
-            -0.5, 0.7, -0.2,
-            0.4, -0.8, -0.2,
-            0.6, 0.0, -0.2,
+            -0.5, 0.7, 0.1,
+            0.4, -0.8, 0.1,
+            0.6, 0.0, 0.1,
         ];
 
         vertices.append(&mut triangle2);
@@ -278,9 +278,10 @@ fn main() {
          // Generate translation matrix 
          let mut trans: glm::Mat4 = glm::identity();
 
-         trans = glm::scaling(&glm::vec3(1.1, 0.9, 1.0))                                 * trans; // Apply scaling
-         trans = glm::rotation(45.0f32.to_radians(), &glm::vec3(1.0, 1.0, 1.0)) * trans; // Apply rotation
-         trans = glm::translation(&glm::vec3(0.2, -0.2, 0.0))                             * trans; // Apply translation
+         trans = glm::translation(&glm::vec3(0.0, 0.0, -0.5)) * trans; // Translate triangles into negative z's
+         
+         //trans = glm::scaling(&glm::vec3(1.1, 0.9, 1.0))                                 * trans; // Apply scaling
+         //trans = glm::rotation(45.0f32.to_radians(), &glm::vec3(1.0, 1.0, 1.0)) * trans; // Apply rotation
         
         // Create VAO
         unsafe { create_vao(&vertices, &indices, &colors) };
@@ -354,14 +355,23 @@ fn main() {
 
                 // Get the sine value
                 let sine_value = elapsed.sin();
-                                
-                trans[(0, 0)] = sine_value;
-                trans[(0, 1)] = -sine_value;
 
+                // Apply sine value to the transformation matrix
+                //trans[(0, 0)] = sine_value;
+                
                 let mut curr_program: i32 = 0;
                 gl::GetIntegerv(gl::CURRENT_PROGRAM, &mut curr_program);
                 
                 gl::UseProgram(curr_program as u32);
+                
+                let angle = 45.0f32.to_radians();
+                // Always apply perspective as the last transformation
+                trans = glm::perspective(window_aspect_ratio, angle, 0.01, 100.0) * trans; // Apply perspective
+
+                // Some resources:
+                // https://learnopengl.com/
+                // https://thebookofshaders.com/03/
+                // https://dev.to/samkevich/learn-opengl-with-rust-creating-a-window-1792
                 
                 gl::UniformMatrix4fv(4, 1, gl::FALSE, trans.as_ptr());
                 
